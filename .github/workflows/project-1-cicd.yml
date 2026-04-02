@@ -11,14 +11,18 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 env:
   AWS_REGION: ap-southeast-2
+  AWS_ROLE_ARN: arn:aws:iam::375394803225:role/github-actions-oidc-role
+
   ECR_REPOSITORY: project-1-cicd-dev-app
   ECS_CLUSTER: project-1-cicd-dev-cluster
   ECS_SERVICE: project-1-cicd-dev-service
   ECS_TASK_DEFINITION: project-1-cicd/ecs-task-definition.dev.json
   CONTAINER_NAME: app
+
   WORKING_DIRECTORY: project-1-cicd
   TERRAFORM_WORKING_DIRECTORY: project-1-cicd/terraform
 
@@ -26,11 +30,9 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ${{ env.WORKING_DIRECTORY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,29 +55,27 @@ jobs:
     name: Terraform plan
     runs-on: ubuntu-latest
     needs: test
-
     defaults:
       run:
         working-directory: ${{ env.TERRAFORM_WORKING_DIRECTORY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-terraform-plan
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform init
         run: terraform init
 
-      - name: Terraform format check
+      - name: Terraform fmt check
         run: terraform fmt -check
 
       - name: Terraform validate
@@ -94,27 +94,24 @@ jobs:
     name: Terraform apply
     runs-on: ubuntu-latest
     needs: terraform-plan
-
     environment:
       name: dev-apply
-
     defaults:
       run:
         working-directory: ${{ env.TERRAFORM_WORKING_DIRECTORY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-terraform-apply
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
 
       - name: Download terraform plan artifact
         uses: actions/download-artifact@v4
@@ -132,21 +129,19 @@ jobs:
     name: Build and deploy to ECS
     runs-on: ubuntu-latest
     needs: terraform-apply
-
     defaults:
       run:
         working-directory: ${{ env.WORKING_DIRECTORY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-deploy
 
       - name: Login to Amazon ECR
         id: login-ecr
