@@ -8,3 +8,13 @@ terraform {
     }
   }
 }
+
+terraform {
+  backend "s3" {
+    bucket       = "devops-portfolio-terraform-state"
+    key          = "project-1-cicd/dev/terraform.tfstate"
+    region       = "ap-southeast-2"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
