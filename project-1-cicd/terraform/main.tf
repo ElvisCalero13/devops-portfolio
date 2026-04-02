@@ -11,7 +11,7 @@ terraform {
 
 terraform {
   backend "s3" {
-    bucket       = "devops-portfolio-terraform-state"
+    bucket       = "devops-portfolio-terraform-state-375394803225-ap-southeast-2-an"
     key          = "project-1-cicd/dev/terraform.tfstate"
     region       = "ap-southeast-2"
     encrypt      = true
