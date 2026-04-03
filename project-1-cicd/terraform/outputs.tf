@@ -22,3 +22,13 @@ output "load_balancer_dns_name" {
   description = "Application URL"
   value       = aws_lb.app.dns_name
 }
+
+output "cloudwatch_dashboard_name" {
+  description = "CloudWatch dashboard name"
+  value       = aws_cloudwatch_dashboard.project_1.dashboard_name
+}
+
+output "sns_alerts_topic_arn" {
+  description = "SNS topic ARN for CloudWatch alerts"
+  value       = aws_sns_topic.alerts.arn
+}
