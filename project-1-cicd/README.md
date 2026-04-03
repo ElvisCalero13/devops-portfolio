@@ -1,6 +1,6 @@
 # 🚀 Project 1 – CI/CD Pipeline on AWS ECS
 
-[![CI](https://github.com/elviscalero13/devops-portfolio/actions/workflows/project-1-cicd.yml/badge.svg)](https://github.com/elviscalero/devops-portfolio/actions/workflows/cicd.yml)
+[![CI](https://github.com/elviscalero13/devops-portfolio/actions/workflows/project-1-cicd.yml/badge.svg)](https://github.com/elviscalero13/devops-portfolio/actions/workflows/project-1-cicd.yml)
 ![Terraform](https://img.shields.io/badge/IaC-Terraform-623CE4)
 [![Quality](https://github.com/elviscalero13/devops-portfolio/actions/workflows/project-1-quality.yml/badge.svg)](https://github.com/elviscalero13/devops-portfolio/actions/workflows/project-1-quality.yml)
 ![AWS ECS](https://img.shields.io/badge/AWS-ECS_Fargate-orange)
@@ -9,16 +9,26 @@
 
 ## 📌 Overview
 
-This project demonstrates a complete **end-to-end CI/CD pipeline** for a containerized FastAPI application deployed on AWS.
+This project demonstrates a complete **end-to-end CI/CD pipeline** for a containerized FastAPI application deployed on AWS ECS Fargate.
 
 It includes modern DevOps practices such as:
 
-- Infrastructure as Code (Terraform)
-- Secure authentication using GitHub OIDC
-- Automated deployments to ECS Fargate
-- Code quality analysis with SonarCloud
-- Monitoring and alerting with CloudWatch and SNS
+- Infrastructure as Code using Terraform
+- Secure AWS authentication via GitHub OIDC
+- Automated container deployment with ECS Fargate
+- Code quality analysis using SonarCloud
+- Observability with CloudWatch dashboards and alarms
+- Alerting via SNS email notifications
 
+---
+
+## 🏗️ Architecture
+
+This architecture illustrates a full CI/CD workflow integrating GitHub Actions, SonarCloud for code quality, AWS ECS for container orchestration, and CloudWatch with SNS for monitoring and alerting.
+
+<p align="center">
+  <img src="diagrams/project-1-cicd.png" width="800"/>
+</p>
 ---
 
 ## 🏗️ Stack
@@ -28,6 +38,7 @@ It includes modern DevOps practices such as:
 - GitHub Actions (CI/CD)
 - Amazon ECR
 - Amazon ECS (Fargate)
+- Application Load Balancer (ALB)
 - Terraform
 - SonarCloud
 - AWS CloudWatch
@@ -37,41 +48,38 @@ It includes modern DevOps practices such as:
 
 ## ⚙️ Features
 
-- CI/CD pipeline with GitHub Actions
-- Docker image build and push to ECR
-- Deployment to ECS Fargate
-- Infrastructure as Code using Terraform
-- Code quality analysis with SonarCloud
-- CloudWatch monitoring dashboard
-- CloudWatch alarms for system health
-- SNS email notifications for alerts
-
-🔜 Planned:
-
-- Automatic rollback (deployment circuit breaker)
-- Advanced health checks (/live, /ready)
+- End-to-End CI/CD pipeline with GitHub Actions
+- Docker image build and push to Amazon ECR
+- Automated deployment to ECS Fargate
+- Infrastructure fully managed with Terraform
+- Static code analysis using SonarCloud
+- CloudWatch dashboard for system observability
+- CloudWatch alarms for proactive monitoring
+- SNS email notifications for incident alerts
 
 ---
 
 ## 🔁 CI/CD Pipeline
 
-### 1. Quality Pipeline (`quality.yml`)
+### 1. Quality Pipeline (`project-1-quality.yml`)
 
-- Runs on pull requests
+- Triggered on pull requests
 - Executes:
-  - unit tests
-  - coverage report
+  - Unit tests
+  - Coverage reporting
   - SonarCloud analysis
+
+👉 Ensures code quality before merging
 
 ---
 
-### 2. Deployment Pipeline (`cicd.yml`)
+### 2. Deployment Pipeline (`project-1-cicd.yml`)
 
-- Runs on push to `main`
+- Triggered on push to `main`
 - Executes:
   - Terraform plan & apply
-  - Docker build & push
-  - ECS deployment
+  - Docker build & push to ECR
+  - ECS service deployment
 
 ---
 
@@ -85,8 +93,6 @@ This project integrates **SonarCloud** for continuous code quality inspection.
 - Quality checks executed in CI pipeline
 
 👉 SonarCloud runs automatically on pull requests and helps maintain clean, reliable code.
-
-> Note: Quality Gates enforcement is planned as a next step.
 
 ---
 
@@ -135,9 +141,9 @@ All CloudWatch alarms are connected to an **Amazon SNS topic**.
 
 ---
 
-## 🔁 Safe Deployments (Planned)
+## 🔁 Safe Deployments
 
-Automatic rollback using ECS deployment circuit breaker is planned for future implementation.
+This service uses Amazon ECS rolling deployments with deployment circuit breaker enabled.
 
 ```hcl
 deployment_circuit_breaker {
@@ -146,27 +152,23 @@ deployment_circuit_breaker {
 }
 ```
 
-👉 This will ensure that failed deployments are automatically reverted to the last stable version.
-
-> Status: 🔜 Not implemented yet
+👉 This ensure that failed deployments are automatically reverted to the last stable version.
 
 ---
 
-## ❤️ Health Checks (Planned)
+## ❤️ Health Checks
 
-Advanced health checks will be implemented to improve deployment reliability:
+This project includes dedicated health check endpoints to improve service reliability:
 
-- `/health/live` → verifies container is running
-- `/health/ready` → verifies application readiness
+- `/health` → general health check
+- `/health/live` → verifies the container is running
+- `/health/ready` → verifies the application is ready to serve traffic
 
-These will be used by:
-
+These endpoints are used by:
 - ECS container health checks
-- Application Load Balancer
+- Application Load Balancer target group health checks
 
-👉 This allows better failure detection and safer deployments.
-
-> Status: 🔜 Not implemented yet
+👉 This helps detect failures earlier and supports safer deployments.
 
 ---
 
@@ -183,6 +185,8 @@ chmod +x scripts/run-docker.sh
 
 - `/`
 - `/health`
+- `/health/live`
+- `/health/ready`
 - `/version`
 
 ---
@@ -191,7 +195,7 @@ chmod +x scripts/run-docker.sh
 
 - Uses AWS Fargate with minimal resources
 - Designed to run at low cost (~$0–$5/month)
-- Can be removed with:
+- Can be fully removed with:
 
 ```bash
 terraform destroy
@@ -201,10 +205,10 @@ terraform destroy
 
 ## 🎯 Project Goals
 
-- Demonstrate end-to-end CI/CD pipeline
+- Demonstrate a production-style CI/CD pipeline
 - Showcase AWS ECS deployment with Terraform
 - Implement real-world DevOps practices
-- Include monitoring and alerting
+- Include observability and alerting
 - Maintain a cost-efficient and production-ready setup
 
 ---
