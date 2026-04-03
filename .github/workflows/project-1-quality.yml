@@ -1,4 +1,4 @@
-name: quality-checks
+name: project-1-quality-checks
 
 on:
   pull_request:

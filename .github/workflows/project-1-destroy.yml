@@ -1,4 +1,4 @@
-name: destroy-project-1-cicd
+name: project-1-destroy
 
 on:
   workflow_dispatch:
