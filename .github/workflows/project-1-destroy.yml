@@ -1,0 +1,49 @@
+name: destroy-project-1-cicd
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ap-southeast-2
+  AWS_ROLE_ARN: arn:aws:iam::375394803225:role/github-actions-oidc-role
+  TERRAFORM_WORKING_DIRECTORY: project-1-cicd/terraform
+
+concurrency:
+  group: project-1-cicd-destroy
+  cancel-in-progress: false
+
+jobs:
+  terraform-destroy:
+    name: Destroy infrastructure
+    runs-on: ubuntu-latest
+
+    environment:
+      name: dev-destroy
+
+    defaults:
+      run:
+        working-directory: ${{ env.TERRAFORM_WORKING_DIRECTORY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-destroy
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform destroy
+        run: terraform destroy -auto-approve
