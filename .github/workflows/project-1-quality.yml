@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "project-1-cicd/**"
-      - ".github/workflows/project-1-quality.yml"
+      - ".github/workflows/project-1-*"
   # push:
   #   branches:
   #     - main

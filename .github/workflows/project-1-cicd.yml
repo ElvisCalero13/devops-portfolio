@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "project-1-cicd/**"
-      - ".github/workflows/project-1-cicd.yml"
+      - ".github/workflows/project-1-*"
   workflow_dispatch:
 
 permissions:
