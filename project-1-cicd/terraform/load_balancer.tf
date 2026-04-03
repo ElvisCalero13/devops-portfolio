@@ -22,11 +22,11 @@ resource "aws_lb_target_group" "app" {
 
   health_check {
     enabled             = true
-    path                = "/health"
+    path                = "/health/ready"
     matcher             = "200"
     healthy_threshold   = 2
     unhealthy_threshold = 3
-    interval            = 30
+    interval            = 15
     timeout             = 5
   }
 
