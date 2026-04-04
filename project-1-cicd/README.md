@@ -27,7 +27,7 @@ It includes modern DevOps practices such as:
 This architecture illustrates a full CI/CD workflow integrating GitHub Actions, SonarCloud for code quality, AWS ECS for container orchestration, and CloudWatch with SNS for monitoring and alerting.
 
 <p align="center">
-  <img src="diagrams/project-1-cicd.png" width="800"/>
+  <img src="../diagrams/project-1-cicd.png" width="800"/>
 </p>
 ---
 
