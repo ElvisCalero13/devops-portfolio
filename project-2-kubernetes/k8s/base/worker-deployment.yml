@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-2-worker
+  namespace: project-2
+  labels:
+    app: project-2-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-2-worker
+  template:
+    metadata:
+      labels:
+        app: project-2-worker
+    spec:
+      containers:
+        - name: worker
+          image: project-2-worker:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REDIS_ADDR
+              value: "redis:6379"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
