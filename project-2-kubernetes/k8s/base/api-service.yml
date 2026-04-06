@@ -3,11 +3,13 @@ kind: Service
 metadata:
   name: project-2-api
   namespace: project-2
+  labels:
+    app: project-2-api
 spec:
   selector:
     app: project-2-api
   ports:
-    - protocol: TCP
+    - name: http
       port: 80
       targetPort: 8080
   type: ClusterIP
