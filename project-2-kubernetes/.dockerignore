@@ -1,0 +1,9 @@
+.git
+.github
+docs
+scripts
+k8s
+helm
+.venv
+__pycache__
+*.md
