@@ -1,4 +1,4 @@
-name: project-3-data-pipeline
+name: project-3-cicd
 
 on:
   push:
@@ -15,6 +15,7 @@ permissions:
 env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+  ALERT_EMAIL: ${{ vars.PROJECT3_ALERT_EMAIL }}
   TERRAFORM_WORKING_DIRECTORY: project-3-data-pipeline/terraform/environments/dev
 
 concurrency:
@@ -54,7 +55,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -out=tfplan -var="alert_email=${{ vars.PROJECT3_ALERT_EMAIL }}"
+        run: terraform plan -out=tfplan -var="alert_email=${{ env.ALERT_EMAIL }}"
 
       - name: Upload terraform plan artifact
         uses: actions/upload-artifact@v4
