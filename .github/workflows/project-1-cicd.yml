@@ -14,8 +14,8 @@ permissions:
   id-token: write
 
 env:
-  AWS_REGION: ap-southeast-2
-  AWS_ROLE_ARN: arn:aws:iam::375394803225:role/github-actions-oidc-role
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
 
   ECR_REPOSITORY: project-1-cicd-dev-app
   ECS_CLUSTER: project-1-cicd-dev-cluster
@@ -25,6 +25,10 @@ env:
 
   WORKING_DIRECTORY: project-1-cicd
   TERRAFORM_WORKING_DIRECTORY: project-1-cicd/terraform
+
+concurrency:
+  group: project-1-cicd
+  cancel-in-progress: false
 
 jobs:
   terraform-plan:

@@ -1,0 +1,5 @@
+[
+  {"user_id": 1, "event_type": "login", "country": "AU", "timestamp": "2026-04-05T10:00:00Z"},
+  {"user_id": 2, "event_type": "view_product", "country": "AU", "timestamp": "2026-04-05T10:05:00Z"},
+  {"user_id": 3, "event_type": "purchase", "country": "NZ", "timestamp": "2026-04-05T10:10:00Z"}
+]
