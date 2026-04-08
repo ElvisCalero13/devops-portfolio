@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "project-3-data-pipeline/**"
-      - ".github/workflows/project-3-*"
   workflow_dispatch:
 
 permissions:
@@ -55,7 +54,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan -var="alert_email=${{ vars.PROJECT3_ALERT_EMAIL }}"
 
       - name: Upload terraform plan artifact
         uses: actions/upload-artifact@v4
@@ -99,4 +98,4 @@ jobs:
         run: terraform init
 
       - name: Terraform Apply approved plan
-        run: terraform apply -auto-approve -var="alert_email=${{ vars.PROJECT3_ALERT_EMAIL }}"
+        run: terraform apply -auto-approve

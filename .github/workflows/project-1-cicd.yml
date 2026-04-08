@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "project-1-cicd/**"
-      - ".github/workflows/project-1-*"
   workflow_dispatch:
 
 permissions:
@@ -63,7 +62,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan -var="alert_email=${{ vars.PROJECT3_ALERT_EMAIL }}"
 
       - name: Upload terraform plan artifact
         uses: actions/upload-artifact@v4
