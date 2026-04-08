@@ -1,4 +1,4 @@
-name: project-1-destroy
+name: project-3-destroy
 
 on:
   workflow_dispatch:
@@ -10,19 +10,16 @@ permissions:
 env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
-  TERRAFORM_WORKING_DIRECTORY: project-1-cicd/terraform
+  TERRAFORM_WORKING_DIRECTORY: project-3-data-pipeline/terraform/environments/dev
 
 concurrency:
-  group: project-1-cicd-destroy
+  group: project-3-destroy
   cancel-in-progress: false
 
 jobs:
   terraform-destroy:
     name: Destroy infrastructure
     runs-on: ubuntu-latest
-
-    environment:
-      name: dev-destroy
 
     defaults:
       run:
@@ -37,13 +34,13 @@ jobs:
         with:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-          role-session-name: github-actions-destroy
+          role-session-name: github-actions-project-3-destroy
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform init
+      - name: Terraform Init
         run: terraform init
 
-      - name: Terraform destroy
-        run: terraform destroy -auto-approve
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -var="alert_email=${{ vars.PROJECT3_ALERT_EMAIL }}"
