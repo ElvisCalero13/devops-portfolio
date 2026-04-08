@@ -8,8 +8,6 @@ permissions:
   id-token: write
 
 env:
-  AWS_REGION: ${{ vars.AWS_REGION }}
-  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
   TERRAFORM_WORKING_DIRECTORY: project-3-data-pipeline/terraform/environments/dev
 
 concurrency:
@@ -20,6 +18,14 @@ jobs:
   terraform-destroy:
     name: Destroy infrastructure
     runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.ref_name == 'main' && 'project-3-dev' }}
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
 
     defaults:
       run:

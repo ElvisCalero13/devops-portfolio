@@ -12,11 +12,11 @@ permissions:
   contents: read
   id-token: write
 
-env:
-  AWS_REGION: ${{ vars.AWS_REGION }}
-  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
-  ALERT_EMAIL: ${{ vars.PROJECT3_ALERT_EMAIL }}|
+concurrency:
+  group: project-1-cicd
+  cancel-in-progress: false
 
+env:
   ECR_REPOSITORY: project-1-cicd-dev-app
   ECS_CLUSTER: project-1-cicd-dev-cluster
   ECS_SERVICE: project-1-cicd-dev-service
@@ -26,14 +26,18 @@ env:
   WORKING_DIRECTORY: project-1-cicd
   TERRAFORM_WORKING_DIRECTORY: project-1-cicd/terraform
 
-concurrency:
-  group: project-1-cicd
-  cancel-in-progress: false
-
 jobs:
   terraform-plan:
     name: Terraform plan
     runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.ref_name == 'main' && 'project-1-dev' }}
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
 
     defaults:
       run:
@@ -63,7 +67,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -out=tfplan -var="alert_email=${{ env.ALERT_EMAIL }}"
+        run: terraform plan -out=tfplan
 
       - name: Upload terraform plan artifact
         uses: actions/upload-artifact@v4
@@ -77,7 +81,12 @@ jobs:
     needs: terraform-plan
 
     environment:
-      name: dev-apply
+      name: ${{ github.ref_name == 'main' && 'project-1-dev' }}
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
 
     defaults:
       run:
@@ -113,6 +122,13 @@ jobs:
     name: Build and deploy to ECS
     runs-on: ubuntu-latest
     needs: terraform-apply
+
+    environment:
+      name: ${{ github.ref_name == 'main' && 'project-1-dev' }}
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
 
     defaults:
       run:

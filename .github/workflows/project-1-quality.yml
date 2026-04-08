@@ -4,12 +4,6 @@ on:
   pull_request:
     paths:
       - "project-1-cicd/**"
-      - ".github/workflows/project-1-*"
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - "project-1-cicd/**"
   workflow_dispatch:
 
 permissions:
@@ -20,6 +14,13 @@ jobs:
   sonar:
     name: SonarQube analysis
     runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.ref_name == 'main' && 'project-1-dev' }}
+
+    env:
+      SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY }}
+      SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
 
     defaults:
       run:
@@ -52,8 +53,8 @@ jobs:
         with:
           projectBaseDir: project-1-cicd
           args: >
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
             -Dsonar.sources=app
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
