@@ -15,6 +15,7 @@ permissions:
 env:
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+  ALERT_EMAIL: ${{ vars.PROJECT3_ALERT_EMAIL }}|
 
   ECR_REPOSITORY: project-1-cicd-dev-app
   ECS_CLUSTER: project-1-cicd-dev-cluster
@@ -62,7 +63,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -out=tfplan -var="alert_email=${{ vars.PROJECT3_ALERT_EMAIL }}"
+        run: terraform plan -out=tfplan -var="alert_email=${{ env.ALERT_EMAIL }}"
 
       - name: Upload terraform plan artifact
         uses: actions/upload-artifact@v4

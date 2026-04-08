@@ -1,8 +1,11 @@
 variable "aws_region" {
-  type    = string
-  default = "ap-southeast-2"
+  description = "AWS region"
+  type        = string
+  default     = "ap-southeast-2"
 }
 
 variable "alert_email" {
-  type = string
+  description = "Email address to receive CloudWatch alarm notifications"
+  type        = string
+  default     = "your-email@example.com"
 }
