@@ -8,8 +8,6 @@ permissions:
   id-token: write
 
 env:
-  AWS_REGION: ${{ vars.AWS_REGION }}
-  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
   TERRAFORM_WORKING_DIRECTORY: project-1-cicd/terraform
 
 concurrency:
@@ -22,7 +20,11 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: dev-destroy
+      name: ${{ github.ref_name == 'main' && 'project-1-dev' }}
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
 
     defaults:
       run:

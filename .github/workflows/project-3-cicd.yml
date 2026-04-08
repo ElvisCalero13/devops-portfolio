@@ -13,9 +13,6 @@ permissions:
   id-token: write
 
 env:
-  AWS_REGION: ${{ vars.AWS_REGION }}
-  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
-  ALERT_EMAIL: ${{ vars.PROJECT3_ALERT_EMAIL }}
   TERRAFORM_WORKING_DIRECTORY: project-3-data-pipeline/terraform/environments/dev
 
 concurrency:
@@ -26,6 +23,14 @@ jobs:
   terraform-plan:
     name: Terraform plan
     runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.ref_name == 'main' && 'project-3-dev' }}
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
 
     defaults:
       run:
@@ -55,7 +60,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform plan
-        run: terraform plan -out=tfplan -var="alert_email=${{ env.ALERT_EMAIL }}"
+        run: terraform plan -out=tfplan
 
       - name: Upload terraform plan artifact
         uses: actions/upload-artifact@v4
@@ -69,7 +74,12 @@ jobs:
     needs: terraform-plan
 
     environment:
-      name: dev-apply
+      name: ${{ github.ref_name == 'main' && 'project-3-dev' }}
+
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
 
     defaults:
       run:
