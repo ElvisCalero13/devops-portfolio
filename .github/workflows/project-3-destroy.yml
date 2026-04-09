@@ -49,4 +49,4 @@ jobs:
         run: terraform init
 
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve -var="alert_email=${{ vars.PROJECT3_ALERT_EMAIL }}"
+        run: terraform destroy -auto-approve
