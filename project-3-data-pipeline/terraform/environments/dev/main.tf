@@ -36,7 +36,7 @@ module "lambda" {
   raw_bucket_name       = module.s3.raw_bucket_name
   raw_bucket_arn        = module.s3.raw_bucket_arn
   processed_bucket_name = module.s3.processed_bucket_name
-  package_file          = abspath("${path.root}/../../../build/project-3-lambda.zip")
+  source_file           = abspath("${path.root}/../../../lambda/processor.py")
   common_tags           = local.common_tags
 }
 
