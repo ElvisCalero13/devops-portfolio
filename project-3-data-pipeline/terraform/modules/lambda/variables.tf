@@ -18,7 +18,7 @@ variable "processed_bucket_name" {
   type = string
 }
 
-variable "package_file" {
+variable "source_file" {
   type = string
 }
 
