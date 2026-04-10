@@ -47,7 +47,7 @@ jobs:
         with:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-          role-session-name: github-actions-terraform-plan
+          role-session-name: github-actions-project-3-plan
 
       - name: Verify caller identity
         run: aws sts get-caller-identity
@@ -55,22 +55,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Package Lambda
-        shell: bash
-        run: |
-          set -e
-          mkdir -p project-3-data-pipeline/build
-
-          LAMBDA_FILE=$(find . -type f -name "processor.py" | head -n 1)
-
-          if [ -z "$LAMBDA_FILE" ]; then
-            echo "processor.py not found"
-            exit 1
-          fi
-
-          zip -j project-3-data-pipeline/build/project-3-lambda.zip "$LAMBDA_FILE"
-
-      - name: Terraform init
+      - name: Terraform Init
         run: terraform init
 
       - name: Terraform fmt check
@@ -114,7 +99,7 @@ jobs:
         with:
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-          role-session-name: github-actions-apply
+          role-session-name: github-actions-project-3-apply
 
       - name: Verify caller identity
         run: aws sts get-caller-identity
