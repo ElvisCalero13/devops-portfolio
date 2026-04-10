@@ -55,6 +55,12 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Package Lambda
+        run: |
+          mkdir -p project-3-data-pipeline/build
+          cd project-3-data-pipeline/lambda
+          zip -j ../build/project-3-lambda.zip processor.py
+
       - name: Terraform init
         run: terraform init
 
