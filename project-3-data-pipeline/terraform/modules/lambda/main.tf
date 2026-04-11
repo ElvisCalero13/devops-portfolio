@@ -2,20 +2,14 @@ locals {
   name_prefix = "${var.project_name}-${var.environment}"
 }
 
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_file = var.source_file
-  output_path = "${path.module}/lambda_payload.zip"
-}
-
 resource "aws_lambda_function" "processor" {
   function_name = "${local.name_prefix}-processor"
   role          = var.lambda_role_arn
   handler       = "processor.handler"
   runtime       = "python3.11"
 
-  filename         = data.archive_file.lambda_zip.output_path
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  filename         = var.package_file
+  source_code_hash = filebase64sha256(var.package_file)
 
   timeout     = 30
   memory_size = 256
