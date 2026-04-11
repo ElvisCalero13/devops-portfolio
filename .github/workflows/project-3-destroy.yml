@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify Lambda package exists
-        run: test -f ../../../lambda/dist/project-3-lambda.zip
+        run: test -f ../../../lambda/project-3-lambda.zip
 
       - name: Configure AWS credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v4
