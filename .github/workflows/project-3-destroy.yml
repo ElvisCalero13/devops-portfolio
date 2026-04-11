@@ -35,6 +35,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify Lambda package exists
+        run: test -f ../../../lambda/dist/project-3-lambda.zip
+
       - name: Configure AWS credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -52,7 +55,7 @@ jobs:
         run: terraform init
 
       - name: Terraform State List
-        run: terraform state list
+        run: terraform state list || true
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
